@@ -1,3 +1,6 @@
+# 2025_SEASONTHON_TEAM_21_FE
+[2025 kakao X groom 시즌톤] 21팀 [ SSLIM ] - FE
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
