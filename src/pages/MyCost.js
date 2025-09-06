@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyCost.css';
 import logo from '../assets/logo.png';
-
+import { getIncomeBracket, saveMyCosts } from '../api/myCostService';
 
 export default function MyCost() {
   const navigate = useNavigate();
@@ -31,6 +31,8 @@ export default function MyCost() {
 
   const getNumericValue = (str) => parseInt((str || '').replace(/[^0-9]/g, ''), 10) || 0;
   const formatCurrency = (num) => num.toLocaleString('ko-KR');
+
+  const toWonFromMan = (man) => (Number(man) || 0) * 10000;
 
   const getSliderRange = (key) => {
     switch (key) {
@@ -105,7 +107,7 @@ export default function MyCost() {
     return { name: '5분위+(임시)', label: '800만원 이상(임시)' };
   }
 
-  // --- 소득분위: 백엔드 조회 (개발 모드에서는 목으로 대체, 디바운스 300ms) ---
+  // --- 소득분위: 백엔드 조회 (디바운스 300ms) ---
   const debounceRef = useRef(null);
   useEffect(() => {
     const incMan = getNumericValue(income);
@@ -116,47 +118,66 @@ export default function MyCost() {
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
+      const controller = new AbortController();
       try {
         setBracketLoading(true);
 
         if (isDev) {
           setBracket(mockBracketFromIncome(incMan));
-          return;
+        } else {
+          const b = await getIncomeBracket(incMan, controller.signal);
+          setBracket(b);
         }
-
-        const res = await fetch(`/api/income-bracket?income=${incMan}`, {
-          headers: { Accept: 'application/json' }
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setBracket({ name: data.name, label: data.label ?? data.name });
       } catch (e) {
         setBracket(null);
         setBracketError('소득분위 정보를 불러오지 못했습니다.');
       } finally {
         setBracketLoading(false);
       }
+      return () => controller.abort();
     }, 300);
 
     return () => debounceRef.current && clearTimeout(debounceRef.current);
   }, [income, isDev]);
 
-  const goBack = () => navigate('/');
+  const goBack = () => navigate('/home');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const incMan = getNumericValue(income);
     if (!incMan) return;
 
-    const fallbackBracket = bracket ?? mockBracketFromIncome(incMan);
-    if (!isDev && !bracket) return;
+    const realBracket = bracket ?? (isDev ? mockBracketFromIncome(incMan) : null);
+    if (!isDev && !realBracket) return;
+
+    // 백엔드에 값 전송(원화 숫자)
+    const payload = {
+      age: getNumericValue(age) || null,
+      incomeWon: toWonFromMan(incMan),
+      costsWon: {
+        food:          toWonFromMan(getNumericValue(myCosts.food)),
+        housing:       toWonFromMan(getNumericValue(myCosts.housing)),
+        education:     toWonFromMan(getNumericValue(myCosts.education)),
+        transport:     toWonFromMan(getNumericValue(myCosts.transport)),
+        communication: toWonFromMan(getNumericValue(myCosts.communication)),
+        entertainment: toWonFromMan(getNumericValue(myCosts.entertainment)),
+      },
+    };
+
+    try {
+      await saveMyCosts(payload);
+    } catch (e) {
+      // 실패하더라도 비교 페이지 이동은 유지(필요 시 막아도 됨)
+      // eslint-disable-next-line no-console
+      console.error('[saveMyCosts failed]', e);
+    }
 
     navigate('/comparison', {
       state: {
-        selectedBracket: fallbackBracket?.name,
-        selectedRegion: fallbackBracket?.name, // 하위호환
+        selectedBracket: realBracket?.name,
+        selectedRegion: realBracket?.name, // 하위호환
         myCosts,
         income,
-        age: getNumericValue(age) || undefined, // 비교 페이지로 전달(선택)
+        age: getNumericValue(age) || undefined,
       }
     });
   };
@@ -292,12 +313,11 @@ export default function MyCost() {
   return (
     <div className="app-container">
       <div className="phone-frame">
-      <header className="app-header">
-        <img src={logo} alt="로고" className="logo-circle" />   {/* 로고 이미지로 교체 */}
-        <h1 className="logo-text">쓸림</h1>
-        <p className="subtitle">나의 월 소득과 생활비를 입력해보세요</p>
-      </header>
-
+        <header className="app-header">
+          <img src={logo} alt="로고" className="logo-circle" />
+          <h1 className="logo-text">쓸림</h1>
+          <p className="subtitle">나의 월 소득과 생활비를 입력해보세요</p>
+        </header>
 
         <main className="content-area">
           <div className="title-section">

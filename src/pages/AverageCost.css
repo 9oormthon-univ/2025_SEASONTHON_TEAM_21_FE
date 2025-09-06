@@ -234,3 +234,69 @@
 .footer-text p {
   margin: 4px 0;
 }
+
+/* 로딩 섹션 */
+.loading-section {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6B7280;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #E5E7EB;
+  border-top: 4px solid #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-section p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* 에러 섹션 */
+.error-section {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.error-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.error-message {
+  color: #DC2626;
+  font-size: 14px;
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.retry-button {
+  background-color: #3B82F6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.retry-button:hover {
+  background-color: #2563EB;
+}
