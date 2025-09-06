@@ -9,9 +9,11 @@ export default function MyCost() {
 
   // 월 소득(만원 단위, "300만원" 형태로 보관)
   const [income, setIncome] = useState('');
+  // 나이("25세" 형태로 보관)
+  const [age, setAge] = useState('');
 
   // 소득분위
-  const [bracket, setBracket] = useState(null); // { name: '3분위', label: '300~399만원 구간' }
+  const [bracket, setBracket] = useState(null); // { name, label }
   const [bracketLoading, setBracketLoading] = useState(false);
   const [bracketError, setBracketError] = useState('');
 
@@ -30,6 +32,7 @@ export default function MyCost() {
 
   const getSliderRange = (key) => {
     switch (key) {
+      case 'age':           return { min: 0,   max: 120,  step: 1, unit: '세' };
       case 'income':        return { min: 50,  max: 1000, step: 1, unit: '만원' }; // 50만~1000만
       case 'housing':       return { min: 1,   max: 300,  step: 1, unit: '만원' };
       case 'food':          return { min: 1,   max: 200,  step: 1, unit: '만원' };
@@ -44,6 +47,7 @@ export default function MyCost() {
   const handleSliderChange = (key, value) => {
     const { unit } = getSliderRange(key);
     if (key === 'income') setIncome(`${value}${unit}`);
+    else if (key === 'age') setAge(`${value}${unit}`);
     else setMyCosts((p) => ({ ...p, [key]: `${value}${unit}` }));
   };
 
@@ -52,6 +56,7 @@ export default function MyCost() {
     const { unit } = getSliderRange(key);
     const display = onlyNum ? `${onlyNum}${unit}` : '';
     if (key === 'income') setIncome(display);
+    else if (key === 'age') setAge(display);
     else setMyCosts((p) => ({ ...p, [key]: display }));
   };
 
@@ -112,18 +117,16 @@ export default function MyCost() {
       try {
         setBracketLoading(true);
 
-        // 개발 모드면 API 호출 생략하고 임시값으로 세팅
         if (isDev) {
           setBracket(mockBracketFromIncome(incMan));
           return;
         }
 
-        // ↓ 실제 운영에서는 백엔드 호출
         const res = await fetch(`/api/income-bracket?income=${incMan}`, {
           headers: { Accept: 'application/json' }
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json(); // 기대: { name: '3분위', label: '300~399만원 구간' }
+        const data = await res.json();
         setBracket({ name: data.name, label: data.label ?? data.name });
       } catch (e) {
         setBracket(null);
@@ -142,10 +145,7 @@ export default function MyCost() {
     const incMan = getNumericValue(income);
     if (!incMan) return;
 
-    // 개발 모드에서는 브라켓 없어도 임시값으로 진행
     const fallbackBracket = bracket ?? mockBracketFromIncome(incMan);
-
-    // 운영 모드에서는 백엔드 브라켓 필수
     if (!isDev && !bracket) return;
 
     navigate('/comparison', {
@@ -153,7 +153,8 @@ export default function MyCost() {
         selectedBracket: fallbackBracket?.name,
         selectedRegion: fallbackBracket?.name, // 하위호환
         myCosts,
-        income
+        income,
+        age: getNumericValue(age) || undefined, // 비교 페이지로 전달(선택)
       }
     });
   };
@@ -227,11 +228,45 @@ export default function MyCost() {
           {bracketLoading && <span className="badge badge-muted">소득분위 불러오는 중…</span>}
           {!bracketLoading && bracket && <span className="badge badge-primary">{bracket.label}</span>}
           {!bracketLoading && bracketError && <span className="badge badge-danger">{bracketError}</span>}
-          {/* 개발 모드에서 임시 표시 */}
           {!bracketLoading && !bracket && !bracketError && isDev && getNumericValue(income) > 0 && (
             <span className="badge badge-primary">{mockBracketFromIncome(getNumericValue(income)).label}</span>
           )}
         </div>
+      </div>
+    );
+  };
+
+  // NEW: AgeItem — 소득 입력 카드와 동일한 스타일
+  const AgeItem = () => {
+    const range = getSliderRange('age');
+    const valueNum = getNumericValue(age) || range.min;
+    const progress = ((valueNum - range.min) / (range.max - range.min)) * 100;
+
+    return (
+      <div className="cost-item">
+        <div className="cost-header">
+          <label>나이</label>
+          <span className="cost-display">{age || `0${range.unit}`}</span>
+        </div>
+        <div className="slider-container">
+          <input
+            type="range"
+            min={range.min}
+            max={range.max}
+            step={range.step}
+            value={valueNum}
+            onChange={(e) => handleSliderChange('age', e.target.value)}
+            className="cost-slider"
+            style={{ '--slider-progress': `${Math.max(0, Math.min(100, progress))}%` }}
+          />
+        </div>
+        <input
+          type="text"
+          placeholder="직접 입력하세요."
+          value={getNumericValue(age) || ''}
+          onChange={(e) => handleInputChange('age', e.target.value)}
+          className="cost-input"
+        />
       </div>
     );
   };
@@ -269,6 +304,11 @@ export default function MyCost() {
               <p>슬라이더로 빠르게 조정하거나, 직접 입력하세요</p>
               <p className="unit-info">모든 항목은 <b>만원</b> 단위로 입력/표시됩니다</p>
             </div>
+          </div>
+
+          {/* 나이(소득 카드와 동일 스타일) */}
+          <div className="cost-input-section">
+            <AgeItem />
           </div>
 
           {/* 월 소득 */}
