@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Comparison.css';
+import logo from '../assets/logo.png';
 
 const Comparison = () => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const Comparison = () => {
     <div className="app-container">
       <div className="phone-frame">
         <header className="app-header">
-          <div className="logo-circle">3</div>
+          <img src={logo} alt="로고" className="logo-circle" /> 
           <h1 className="logo-text">쓸림</h1>
           <p className="subtitle">나의 생활비 비교 분석</p>
         </header>

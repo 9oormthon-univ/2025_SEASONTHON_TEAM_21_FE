@@ -2,6 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyCost.css';
+import logo from '../assets/logo.png';
+
 
 export default function MyCost() {
   const navigate = useNavigate();
@@ -290,11 +292,12 @@ export default function MyCost() {
   return (
     <div className="app-container">
       <div className="phone-frame">
-        <header className="app-header">
-          <div className="logo-circle">3</div>
-          <h1 className="logo-text">쓸림</h1>
-          <p className="subtitle">나의 월 소득과 생활비를 입력해보세요</p>
-        </header>
+      <header className="app-header">
+        <img src={logo} alt="로고" className="logo-circle" />   {/* 로고 이미지로 교체 */}
+        <h1 className="logo-text">쓸림</h1>
+        <p className="subtitle">나의 월 소득과 생활비를 입력해보세요</p>
+      </header>
+
 
         <main className="content-area">
           <div className="title-section">

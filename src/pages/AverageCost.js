@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
+import logo from '../assets/logo.png';
 
 // react-slick의 필수 CSS
 import "slick-carousel/slick/slick.css"; 
@@ -92,7 +93,7 @@ const AverageCost = () => {
     <div className="app-container">
       <div className="phone-frame">
         <header className="app-header">
-          <div className="logo-circle">3</div>
+          <img src={logo} alt="로고" className="logo-circle" />  
           <h1 className="logo-text">쓸림</h1>
           <p className="subtitle">소득분위별 평균 생활비를 확인해보세요</p>
         </header>
