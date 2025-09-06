@@ -93,7 +93,7 @@ const Comparison = () => {
                 {currentRegion}에서 나의 총 생활비는 <strong>{totalUserWon.toLocaleString('ko-KR')}원</strong>, 
               </p>
               <p>
-              소득분위 평균은{' '}
+              소득분위 평균 생활비는{' '}
               <strong>{totalAvgWon.toLocaleString('ko-KR')}원</strong>입니다.
               </p>
               <b>
