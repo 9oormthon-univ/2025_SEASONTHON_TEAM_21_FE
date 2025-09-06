@@ -18,13 +18,13 @@ const MyCost = () => {
   const getSliderRange = (category) => {
     switch (category) {
       case 'housing':
-        return { min: 10, max: 200, step: 1, unit: '만원' }; // 10만원 ~ 200만원
+        return { min: 10, max: 300, step: 1, unit: '만원' }; 
       case 'food':
-        return { min: 100, max: 1000, step: 10, unit: '만원' }; // 10만원 ~ 100만원
+        return { min: 10, max: 300, step: 1, unit: '만원' }; 
       case 'transport':
-        return { min: 20, max: 200, step: 5, unit: '만원' }; // 2만원 ~ 20만원
+        return { min: 10, max: 300, step: 1, unit: '만원' }; 
       case 'other':
-        return { min: 50, max: 500, step: 10, unit: '만원' }; // 5만원 ~ 50만원
+        return { min: 10, max: 1000, step: 1, unit: '만원' };
       default:
         return { min: 0, max: 100, step: 1, unit: '만원' };
     }
