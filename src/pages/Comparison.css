@@ -16,11 +16,15 @@
 .phone-frame {
   width: 100%;
   max-width: 420px;
+  height: 100vh;
+  max-height: 800px;
   background-color: #ffffff;
   border-radius: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   padding: 24px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 헤더 */
@@ -57,6 +61,28 @@
 /* 메인 컨텐츠 영역 */
 .content-area {
   padding: 0 24px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 스크롤바 스타일링 */
+.content-area::-webkit-scrollbar {
+  width: 4px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: #D1D5DB; /* gray-300 */
+  border-radius: 2px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF; /* gray-400 */
 }
 
 .title-section h2 {
@@ -222,7 +248,8 @@
 .button-group {
   display: flex;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-top: auto;
+  padding-top: 20px;
 }
 
 .back-button {
