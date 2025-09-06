@@ -106,11 +106,18 @@
 }
 
 .my-cost {
-  background-color: #3B82F6; /* blue-500 */
   color: white;
   padding: 4px 8px;
   border-radius: 6px;
   font-weight: 700;
+}
+
+.my-cost.higher {
+  background-color: #EF4444; /* red-500 */
+}
+
+.my-cost.lower {
+  background-color: #3B82F6; /* blue-500 */
 }
 
 .vs {
@@ -119,11 +126,18 @@
 }
 
 .avg-cost {
-  background-color: #10B981; /* emerald-500 */
   color: white;
   padding: 4px 8px;
   border-radius: 6px;
   font-weight: 700;
+}
+
+.avg-cost.higher {
+  background-color: #EF4444; /* red-500 */
+}
+
+.avg-cost.lower {
+  background-color: #3B82F6; /* blue-500 */
 }
 
 /* 비교 바 */
@@ -133,19 +147,36 @@
 
 .bar-container {
   display: flex;
-  height: 8px;
-  border-radius: 4px;
+  height: 16px;
+  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 8px;
+  gap: 4px;
 }
 
 .my-bar {
-  background-color: #3B82F6; /* blue-500 */
   transition: width 0.3s ease;
+  border-radius: 8px;
+}
+
+.my-bar.higher {
+  background-color: #EF4444; /* red-500 */
+}
+
+.my-bar.lower {
+  background-color: #3B82F6; /* blue-500 */
 }
 
 .avg-bar {
-  background-color: #10B981; /* emerald-500 */
+  border-radius: 8px;
+}
+
+.avg-bar.higher {
+  background-color: #EF4444; /* red-500 */
+}
+
+.avg-bar.lower {
+  background-color: #3B82F6; /* blue-500 */
 }
 
 .bar-labels {

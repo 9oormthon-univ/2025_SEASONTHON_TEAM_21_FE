@@ -68,15 +68,21 @@ const Comparison = () => {
               <div className="category-header">
                 <h3>주거비</h3>
                 <div className="cost-display">
-                  <span className="my-cost">{userHousing}만원</span>
+                  <span className={`my-cost ${userHousing > averageData.housing ? 'higher' : 'lower'}`}>{userHousing}만원</span>
                   <span className="vs">vs</span>
-                  <span className="avg-cost">{averageData.housing}만원</span>
+                  <span className={`avg-cost ${averageData.housing > userHousing ? 'higher' : 'lower'}`}>{averageData.housing}만원</span>
                 </div>
               </div>
               <div className="comparison-bar">
                 <div className="bar-container">
-                  <div className="my-bar" style={{ width: `${Math.min((userHousing / averageData.housing) * 50, 100)}%` }}></div>
-                  <div className="avg-bar" style={{ width: '50%' }}></div>
+                  <div 
+                    className={`my-bar ${userHousing > averageData.housing ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((userHousing / Math.max(userHousing, averageData.housing)) * 100, 100)}%` }}
+                  ></div>
+                  <div 
+                    className={`avg-bar ${averageData.housing > userHousing ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((averageData.housing / Math.max(userHousing, averageData.housing)) * 100, 100)}%` }}
+                  ></div>
                 </div>
                 <div className="bar-labels">
                   <span>나의 비용</span>
@@ -89,15 +95,21 @@ const Comparison = () => {
               <div className="category-header">
                 <h3>식비</h3>
                 <div className="cost-display">
-                  <span className="my-cost">{userFood}만원</span>
+                  <span className={`my-cost ${userFood > averageData.food ? 'higher' : 'lower'}`}>{userFood}만원</span>
                   <span className="vs">vs</span>
-                  <span className="avg-cost">{averageData.food}만원</span>
+                  <span className={`avg-cost ${averageData.food > userFood ? 'higher' : 'lower'}`}>{averageData.food}만원</span>
                 </div>
               </div>
               <div className="comparison-bar">
                 <div className="bar-container">
-                  <div className="my-bar" style={{ width: `${Math.min((userFood / averageData.food) * 50, 100)}%` }}></div>
-                  <div className="avg-bar" style={{ width: '50%' }}></div>
+                  <div 
+                    className={`my-bar ${userFood > averageData.food ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((userFood / Math.max(userFood, averageData.food)) * 100, 100)}%` }}
+                  ></div>
+                  <div 
+                    className={`avg-bar ${averageData.food > userFood ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((averageData.food / Math.max(userFood, averageData.food)) * 100, 100)}%` }}
+                  ></div>
                 </div>
                 <div className="bar-labels">
                   <span>나의 비용</span>
@@ -110,15 +122,21 @@ const Comparison = () => {
               <div className="category-header">
                 <h3>교통비</h3>
                 <div className="cost-display">
-                  <span className="my-cost">{userTransport}만원</span>
+                  <span className={`my-cost ${userTransport > averageData.transport ? 'higher' : 'lower'}`}>{userTransport}만원</span>
                   <span className="vs">vs</span>
-                  <span className="avg-cost">{averageData.transport}만원</span>
+                  <span className={`avg-cost ${averageData.transport > userTransport ? 'higher' : 'lower'}`}>{averageData.transport}만원</span>
                 </div>
               </div>
               <div className="comparison-bar">
                 <div className="bar-container">
-                  <div className="my-bar" style={{ width: `${Math.min((userTransport / averageData.transport) * 50, 100)}%` }}></div>
-                  <div className="avg-bar" style={{ width: '50%' }}></div>
+                  <div 
+                    className={`my-bar ${userTransport > averageData.transport ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((userTransport / Math.max(userTransport, averageData.transport)) * 100, 100)}%` }}
+                  ></div>
+                  <div 
+                    className={`avg-bar ${averageData.transport > userTransport ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((averageData.transport / Math.max(userTransport, averageData.transport)) * 100, 100)}%` }}
+                  ></div>
                 </div>
                 <div className="bar-labels">
                   <span>나의 비용</span>
@@ -131,15 +149,21 @@ const Comparison = () => {
               <div className="category-header">
                 <h3>기타</h3>
                 <div className="cost-display">
-                  <span className="my-cost">{userOther}만원</span>
+                  <span className={`my-cost ${userOther > averageData.other ? 'higher' : 'lower'}`}>{userOther}만원</span>
                   <span className="vs">vs</span>
-                  <span className="avg-cost">{averageData.other}만원</span>
+                  <span className={`avg-cost ${averageData.other > userOther ? 'higher' : 'lower'}`}>{averageData.other}만원</span>
                 </div>
               </div>
               <div className="comparison-bar">
                 <div className="bar-container">
-                  <div className="my-bar" style={{ width: `${Math.min((userOther / averageData.other) * 50, 100)}%` }}></div>
-                  <div className="avg-bar" style={{ width: '50%' }}></div>
+                  <div 
+                    className={`my-bar ${userOther > averageData.other ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((userOther / Math.max(userOther, averageData.other)) * 100, 100)}%` }}
+                  ></div>
+                  <div 
+                    className={`avg-bar ${averageData.other > userOther ? 'higher' : 'lower'}`} 
+                    style={{ width: `${Math.min((averageData.other / Math.max(userOther, averageData.other)) * 100, 100)}%` }}
+                  ></div>
                 </div>
                 <div className="bar-labels">
                   <span>나의 비용</span>

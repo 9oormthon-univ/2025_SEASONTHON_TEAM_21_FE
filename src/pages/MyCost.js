@@ -152,7 +152,7 @@ const MyCost = () => {
               </div>
               <input
                 type="text"
-                placeholder="예: 45"
+                placeholder="직접 입력하세요."
                 value={getNumericValue(myCosts.housing) || ''}
                 onChange={(e) => handleInputChange('housing', e.target.value)}
                 className="cost-input"
@@ -179,7 +179,7 @@ const MyCost = () => {
               </div>
               <input
                 type="text"
-                placeholder="예: 280"
+                placeholder="직접 입력하세요."
                 value={getNumericValue(myCosts.food) || ''}
                 onChange={(e) => handleInputChange('food', e.target.value)}
                 className="cost-input"
@@ -206,7 +206,7 @@ const MyCost = () => {
               </div>
               <input
                 type="text"
-                placeholder="예: 90"
+                placeholder="직접 입력하세요."
                 value={getNumericValue(myCosts.transport) || ''}
                 onChange={(e) => handleInputChange('transport', e.target.value)}
                 className="cost-input"
@@ -233,7 +233,7 @@ const MyCost = () => {
               </div>
               <input
                 type="text"
-                placeholder="예: 120"
+                placeholder="직접 입력하세요."
                 value={getNumericValue(myCosts.other) || ''}
                 onChange={(e) => handleInputChange('other', e.target.value)}
                 className="cost-input"
