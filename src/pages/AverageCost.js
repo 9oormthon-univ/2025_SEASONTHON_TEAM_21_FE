@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 import './AverageCost.css';
 
-// 지역별 데이터 (6개 항목으로 확장)
+// 소득구간 별 생활비 데이터 (5개 항목)
 const regionData = [
   {
     name: '1분위',
@@ -94,13 +94,13 @@ const AverageCost = () => {
         <header className="app-header">
           <div className="logo-circle">3</div>
           <h1 className="logo-text">쓸림</h1>
-          <p className="subtitle">지역별 평균 생활비를 확인해보세요</p>
+          <p className="subtitle">소득분위별 평균 생활비를 확인해보세요</p>
         </header>
 
         <main className="content-area">
           <div className="title-section">
-            <h2>지역별 청년 평균 생활비</h2>
-            <p className="description">← → 슬라이드로 지역별 평균 생활비를 둘러보세요</p>
+            <h2>소득분위별 청년 평균 생활비</h2>
+            <p className="description">← → 슬라이드로 소득분위별 평균 생활비를 둘러보세요</p>
           </div>
           
           <div className="slider-wrapper">
@@ -142,8 +142,7 @@ const AverageCost = () => {
           </button>
 
           <footer className="footer-text">
-            <p>슬라이더로 지역별 평균 생활비를 둘러보세요</p>
-            <p>지역 선택은 다음 단계에서 할 수 있습니다</p>
+            <p>나의 월 생활비를 조회해보세요</p>
           </footer>
         </main>
       </div>
