@@ -245,7 +245,7 @@ export default function MyCost() {
     return (
       <div className="cost-item">
         <div className="cost-header">
-          <label>나이</label>
+          <label>만 나이</label>
           <span className="cost-display">{age || `0${range.unit}`}</span>
         </div>
         <div className="slider-container">

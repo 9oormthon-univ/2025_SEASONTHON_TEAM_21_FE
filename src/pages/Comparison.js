@@ -90,8 +90,11 @@ const Comparison = () => {
             <h3>분석 요약</h3>
             <div className="summary-content">
               <p>
-                {currentRegion}에서 나의 총 생활비는 <strong>{totalUserWon.toLocaleString('ko-KR')}원</strong>, 소득분위 평균은{' '}
-                <strong>{totalAvgWon.toLocaleString('ko-KR')}원</strong>입니다.
+                {currentRegion}에서 나의 총 생활비는 <strong>{totalUserWon.toLocaleString('ko-KR')}원</strong>, 
+              </p>
+              <p>
+              소득분위 평균은{' '}
+              <strong>{totalAvgWon.toLocaleString('ko-KR')}원</strong>입니다.
               </p>
               <b>
                 {totalUserWon > totalAvgWon
