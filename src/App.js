@@ -1,12 +1,18 @@
 import './App.css';
-import AverageCost from './pages/AverageCost'; // 우리가 만든 AverageCost 페이지를 불러옵니다.
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AverageCost from './pages/AverageCost';
+import MyCost from './pages/MyCost';
 
 function App() {
   return (
-    <div className="App">
-      {/* 이제 우리 앱은 AverageCost 컴포넌트를 보여줍니다. */}
-      <AverageCost />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<AverageCost />} />
+          <Route path="/mycost" element={<MyCost />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick'; // react-slick 라이브러리 import
 
 // react-slick의 필수 CSS 파일들을 불러옵니다.
@@ -39,10 +40,10 @@ const regionData = [
   },
   {
     name: '광주',
-    totalCost: '890,000원',
-    housing: '480,000원',
+    totalCost: '820,000원',
+    housing: '450,000원',
     food: '280,000원',
-    transport: '130,000원',
+    transport: '90,000원',
   },
   {
     name: '대전',
@@ -54,9 +55,10 @@ const regionData = [
 ];
 
 const AverageCost = () => {
-  // 현재 활성화된 슬라이드를 추적하는 state (1번 인덱스 '경기'를 기본값으로 설정)
-  const [activeSlide, setActiveSlide] = useState(1);
+  // 현재 활성화된 슬라이드를 추적하는 state (4번 인덱스 '광주'를 기본값으로 설정)
+  const [activeSlide, setActiveSlide] = useState(4);
   const sliderRef = useRef(null); // 슬라이더 컴포넌트를 직접 제어하기 위한 ref
+  const navigate = useNavigate(); // React Router 네비게이션 훅
 
   // react-slick 슬라이더 설정
   const settings = {
@@ -68,7 +70,7 @@ const AverageCost = () => {
     centerMode: true,
     centerPadding: '20px', // 양 옆 슬라이드가 살짝 보이도록
     arrows: false, // 기본 화살표 숨김
-    initialSlide: 1, // '경기'부터 시작
+    initialSlide: 4, // '광주'부터 시작
     beforeChange: (current, next) => setActiveSlide(next), // 슬라이드 변경 시 activeSlide state 업데이트
   };
 
@@ -77,12 +79,17 @@ const AverageCost = () => {
     sliderRef.current.slickGoTo(index);
   };
 
+  // MyCost 페이지로 이동하는 함수
+  const handleMyCostClick = () => {
+    navigate('/mycost');
+  };
+
   return (
     <div className="app-container">
       <div className="phone-frame">
         <header className="app-header">
-          <div className="logo-circle">슬</div>
-          <h1 className="logo-text">슬림</h1>
+          <div className="logo-circle">3</div>
+          <h1 className="logo-text">쓸림</h1>
           <p className="subtitle">지역별 평균 생활비를 확인해보세요</p>
         </header>
 
@@ -132,7 +139,7 @@ const AverageCost = () => {
             ))}
           </nav>
 
-          <button className="cta-button">
+          <button className="cta-button" onClick={handleMyCostClick}>
             나의 월 생활비 조회
           </button>
 
