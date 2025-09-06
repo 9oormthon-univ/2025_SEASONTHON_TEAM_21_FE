@@ -1,0 +1,231 @@
+/* 구글 폰트(Noto Sans KR) 불러오기 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+/* 전체 앱 배경 및 폰트 설정 */
+.app-container {
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 스마트폰 모양 프레임 */
+.phone-frame {
+  width: 100%;
+  max-width: 420px;
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 24px 0;
+}
+
+/* 헤더 */
+.app-header {
+  text-align: center;
+  padding: 0 24px 20px;
+}
+
+.logo-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3B82F6; /* blue-500 */
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitle {
+  color: #6B7280; /* gray-500 */
+  margin: 4px 0 0;
+}
+
+/* 메인 컨텐츠 영역 */
+.content-area {
+  padding: 0 24px;
+}
+
+.title-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.description {
+  font-size: 14px;
+  color: #6B7280; /* gray-500 */
+  margin: 0 0 32px;
+}
+
+/* 비교 섹션 */
+.comparison-section {
+  margin-bottom: 32px;
+}
+
+.comparison-item {
+  background-color: #F9FAFB; /* gray-50 */
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #E5E7EB; /* gray-200 */
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.category-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #374151; /* gray-700 */
+}
+
+.cost-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.my-cost {
+  background-color: #3B82F6; /* blue-500 */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.vs {
+  color: #6B7280; /* gray-500 */
+  font-weight: 500;
+}
+
+.avg-cost {
+  background-color: #10B981; /* emerald-500 */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+/* 비교 바 */
+.comparison-bar {
+  margin-top: 12px;
+}
+
+.bar-container {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.my-bar {
+  background-color: #3B82F6; /* blue-500 */
+  transition: width 0.3s ease;
+}
+
+.avg-bar {
+  background-color: #10B981; /* emerald-500 */
+}
+
+.bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6B7280; /* gray-500 */
+}
+
+/* 요약 섹션 */
+.summary-section {
+  background-color: #EFF6FF; /* blue-50 */
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+  border: 1px solid #DBEAFE; /* blue-200 */
+}
+
+.summary-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: #1E40AF; /* blue-800 */
+}
+
+.summary-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 8px;
+  color: #374151; /* gray-700 */
+}
+
+.summary-content p:last-child {
+  margin-bottom: 0;
+}
+
+.summary-content strong {
+  color: #1E40AF; /* blue-800 */
+  font-weight: 700;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  flex: 1;
+  background-color: #F3F4F6; /* gray-100 */
+  color: #374151; /* gray-700 */
+  border: none;
+  padding: 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.back-button:hover {
+  background-color: #E5E7EB; /* gray-200 */
+}
+
+.home-button {
+  flex: 1;
+  background-color: #3B82F6; /* blue-500 */
+  color: white;
+  border: none;
+  padding: 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.home-button:hover {
+  background-color: #2563EB; /* blue-600 */
+}
