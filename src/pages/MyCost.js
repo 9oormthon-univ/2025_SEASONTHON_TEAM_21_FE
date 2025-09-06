@@ -1,101 +1,256 @@
-import React, { useState } from 'react';
+// src/pages/MyCost.js
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyCost.css';
 
-const MyCost = () => {
+export default function MyCost() {
   const navigate = useNavigate();
-  const [selectedRegion, setSelectedRegion] = useState('광주');
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // 월 소득(만원 단위, "300만원" 형태로 보관)
+  const [income, setIncome] = useState('');
+
+  // 소득분위
+  const [bracket, setBracket] = useState(null); // { name: '3분위', label: '300~399만원 구간' }
+  const [bracketLoading, setBracketLoading] = useState(false);
+  const [bracketError, setBracketError] = useState('');
+
+  // 6개 지출 항목 (만원 단위)
   const [myCosts, setMyCosts] = useState({
-    housing: '',
-    food: '',
-    transport: '',
-    other: ''
+    food: '',           // 식비
+    housing: '',        // 주거비
+    education: '',      // 교육비
+    transport: '',      // 교통비
+    communication: '',  // 통신비
+    entertainment: ''   // 오락·문화비
   });
 
-  const regions = ['서울', '경기', '부산', '대구', '광주', '대전'];
+  const getNumericValue = (str) => parseInt((str || '').replace(/[^0-9]/g, ''), 10) || 0;
+  const formatCurrency = (num) => num.toLocaleString('ko-KR');
 
-  // 슬라이더 범위 설정 (만원 단위)
-  const getSliderRange = (category) => {
-    switch (category) {
-      case 'housing':
-        return { min: 1, max: 300, step: 1, unit: '만원' }; 
-      case 'food':
-        return { min: 1, max: 300, step: 1, unit: '만원' }; 
-      case 'transport':
-        return { min: 1, max: 300, step: 1, unit: '만원' }; 
-      case 'other':
-        return { min: 1, max: 1000, step: 1, unit: '만원' };
-      default:
-        return { min: 0, max: 100, step: 1, unit: '만원' };
+  const getSliderRange = (key) => {
+    switch (key) {
+      case 'income':        return { min: 50,  max: 1000, step: 1, unit: '만원' }; // 50만~1000만
+      case 'housing':       return { min: 1,   max: 300,  step: 1, unit: '만원' };
+      case 'food':          return { min: 1,   max: 200,  step: 1, unit: '만원' };
+      case 'education':     return { min: 0,   max: 200,  step: 1, unit: '만원' };
+      case 'transport':     return { min: 0,   max: 100,  step: 1, unit: '만원' };
+      case 'communication': return { min: 0,   max: 100,  step: 1, unit: '만원' };
+      case 'entertainment': return { min: 0,   max: 150,  step: 1, unit: '만원' };
+      default:              return { min: 0,   max: 100,  step: 1, unit: '만원' };
     }
   };
 
-  const handleSliderChange = (category, value) => {
-    const range = getSliderRange(category);
-    const displayValue = `${value}${range.unit}`;
-    
-    setMyCosts(prev => ({
-      ...prev,
-      [category]: displayValue
-    }));
+  const handleSliderChange = (key, value) => {
+    const { unit } = getSliderRange(key);
+    if (key === 'income') setIncome(`${value}${unit}`);
+    else setMyCosts((p) => ({ ...p, [key]: `${value}${unit}` }));
   };
 
-  const handleInputChange = (category, value) => {
-    // 숫자만 입력받고 단위에 따라 표시
-    const numericValue = value.replace(/[^0-9]/g, '');
-    const range = getSliderRange(category);
-    const displayValue = numericValue ? `${numericValue}${range.unit}` : '';
-    
-    setMyCosts(prev => ({
-      ...prev,
-      [category]: displayValue
-    }));
+  const handleInputChange = (key, value) => {
+    const onlyNum = value.replace(/[^0-9]/g, '');
+    const { unit } = getSliderRange(key);
+    const display = onlyNum ? `${onlyNum}${unit}` : '';
+    if (key === 'income') setIncome(display);
+    else setMyCosts((p) => ({ ...p, [key]: display }));
   };
 
-  // 입력값에서 숫자만 추출하는 함수
-  const getNumericValue = (costString) => {
-    return parseInt(costString.replace(/[^0-9]/g, '')) || 0;
+  // 총 지출(원) = (만원 합계) * 10,000
+  const getTotalExpenseWon = () => {
+    const sumMan =
+      getNumericValue(myCosts.food) +
+      getNumericValue(myCosts.housing) +
+      getNumericValue(myCosts.education) +
+      getNumericValue(myCosts.transport) +
+      getNumericValue(myCosts.communication) +
+      getNumericValue(myCosts.entertainment);
+    return sumMan * 10000;
   };
 
-  // 총 생활비 계산 (모든 값을 원 단위로 변환)
-  const getTotalCost = () => {
-    const housing = getNumericValue(myCosts.housing) * 10000; // 만원 -> 원
-    const food = getNumericValue(myCosts.food) * 10000; // 만원 -> 원
-    const transport = getNumericValue(myCosts.transport) * 10000; // 만원 -> 원
-    const other = getNumericValue(myCosts.other) * 10000; // 만원 -> 원
-    
-    return housing + food + transport + other;
-  };
+  // 소득 대비 지출 비율
+  const expenseRatio = (() => {
+    const incMan = getNumericValue(income);
+    if (!incMan) return 0;
+    const expMan =
+      getNumericValue(myCosts.food) +
+      getNumericValue(myCosts.housing) +
+      getNumericValue(myCosts.education) +
+      getNumericValue(myCosts.transport) +
+      getNumericValue(myCosts.communication) +
+      getNumericValue(myCosts.entertainment);
+    return Math.min(999, Math.round((expMan / incMan) * 100));
+  })();
 
-  // 총 생활비를 천원 단위로 포맷팅
-  const formatTotalCost = (total) => {
-    return total.toLocaleString('ko-KR');
-  };
+  const ratioLevel = (() => {
+    if (!getNumericValue(income)) return { text: '—', className: '' };
+    if (expenseRatio >= 80) return { text: '높음', className: 'level-high' };
+    if (expenseRatio >= 60) return { text: '보통', className: 'level-medium' };
+    return { text: '양호', className: 'level-good' };
+  })();
 
-  // 슬라이더 진행률 계산 (0-100%)
-  const getSliderProgress = (category) => {
-    const range = getSliderRange(category);
-    const currentValue = getNumericValue(myCosts[category]) || range.min;
-    const progress = ((currentValue - range.min) / (range.max - range.min)) * 100;
-    return Math.max(0, Math.min(100, progress));
-  };
+  // --- 개발 모드용 임시 소득분위 계산 ---
+  function mockBracketFromIncome(incMan) {
+    if (!incMan) return null;
+    if (incMan < 120)  return { name: '1분위(임시)', label: '0~119만원 구간(임시)' };
+    if (incMan < 300)  return { name: '2분위(임시)', label: '120~299만원 구간(임시)' };
+    if (incMan < 500)  return { name: '3분위(임시)', label: '300~499만원 구간(임시)' };
+    if (incMan < 800)  return { name: '4분위(임시)', label: '500~799만원 구간(임시)' };
+    return { name: '5분위+(임시)', label: '800만원 이상(임시)' };
+  }
+
+  // --- 소득분위: 백엔드 조회 (개발 모드에서는 목으로 대체, 디바운스 300ms) ---
+  const debounceRef = useRef(null);
+  useEffect(() => {
+    const incMan = getNumericValue(income);
+    setBracket(null);
+    setBracketError('');
+
+    if (!incMan) { setBracketLoading(false); return; }
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        setBracketLoading(true);
+
+        // 개발 모드면 API 호출 생략하고 임시값으로 세팅
+        if (isDev) {
+          setBracket(mockBracketFromIncome(incMan));
+          return;
+        }
+
+        // ↓ 실제 운영에서는 백엔드 호출
+        const res = await fetch(`/api/income-bracket?income=${incMan}`, {
+          headers: { Accept: 'application/json' }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json(); // 기대: { name: '3분위', label: '300~399만원 구간' }
+        setBracket({ name: data.name, label: data.label ?? data.name });
+      } catch (e) {
+        setBracket(null);
+        setBracketError('소득분위 정보를 불러오지 못했습니다.');
+      } finally {
+        setBracketLoading(false);
+      }
+    }, 300);
+
+    return () => debounceRef.current && clearTimeout(debounceRef.current);
+  }, [income, isDev]);
+
+  const goBack = () => navigate('/');
 
   const handleSubmit = () => {
-    // 여기서 백엔드로 데이터를 전송하고 결과를 받아옵니다
-    console.log('Selected Region:', selectedRegion);
-    console.log('My Costs:', myCosts);
-    // Comparison 페이지로 데이터와 함께 이동
+    const incMan = getNumericValue(income);
+    if (!incMan) return;
+
+    // 개발 모드에서는 브라켓 없어도 임시값으로 진행
+    const fallbackBracket = bracket ?? mockBracketFromIncome(incMan);
+
+    // 운영 모드에서는 백엔드 브라켓 필수
+    if (!isDev && !bracket) return;
+
     navigate('/comparison', {
       state: {
-        selectedRegion,
-        myCosts
+        selectedBracket: fallbackBracket?.name,
+        selectedRegion: fallbackBracket?.name, // 하위호환
+        myCosts,
+        income
       }
     });
   };
 
-  const goBack = () => {
-    navigate('/');
+  const CostItem = ({ label, keyName }) => {
+    const range = getSliderRange(keyName);
+    const valueNum = getNumericValue(myCosts[keyName]) || range.min;
+    const progress = ((valueNum - range.min) / (range.max - range.min)) * 100;
+
+    return (
+      <div className="cost-item">
+        <div className="cost-header">
+          <label>{label}</label>
+          <span className="cost-display">{myCosts[keyName] || `0${range.unit}`}</span>
+        </div>
+        <div className="slider-container">
+          <input
+            type="range"
+            min={range.min}
+            max={range.max}
+            step={range.step}
+            value={valueNum}
+            onChange={(e) => handleSliderChange(keyName, e.target.value)}
+            className="cost-slider"
+            style={{ '--slider-progress': `${Math.max(0, Math.min(100, progress))}%` }}
+          />
+        </div>
+        <input
+          type="text"
+          placeholder="직접 입력하세요."
+          value={getNumericValue(myCosts[keyName]) || ''}
+          onChange={(e) => handleInputChange(keyName, e.target.value)}
+          className="cost-input"
+        />
+      </div>
+    );
   };
+
+  const IncomeItem = () => {
+    const range = getSliderRange('income');
+    const valueNum = getNumericValue(income) || range.min;
+    const progress = ((valueNum - range.min) / (range.max - range.min)) * 100;
+
+    return (
+      <div className="cost-item">
+        <div className="cost-header">
+          <label>나의 월 소득</label>
+          <span className="cost-display">{income || `0${range.unit}`}</span>
+        </div>
+        <div className="slider-container">
+          <input
+            type="range"
+            min={range.min}
+            max={range.max}
+            step={range.step}
+            value={valueNum}
+            onChange={(e) => handleSliderChange('income', e.target.value)}
+            className="cost-slider"
+            style={{ '--slider-progress': `${Math.max(0, Math.min(100, progress))}%` }}
+          />
+        </div>
+        <input
+          type="text"
+          placeholder="직접 입력하세요."
+          value={getNumericValue(income) || ''}
+          onChange={(e) => handleInputChange('income', e.target.value)}
+          className="cost-input"
+        />
+
+        <div className="bracket-info">
+          {bracketLoading && <span className="badge badge-muted">소득분위 불러오는 중…</span>}
+          {!bracketLoading && bracket && <span className="badge badge-primary">{bracket.label}</span>}
+          {!bracketLoading && bracketError && <span className="badge badge-danger">{bracketError}</span>}
+          {/* 개발 모드에서 임시 표시 */}
+          {!bracketLoading && !bracket && !bracketError && isDev && getNumericValue(income) > 0 && (
+            <span className="badge badge-primary">{mockBracketFromIncome(getNumericValue(income)).label}</span>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // 개발/운영에 따라 버튼 활성 조건 분리
+  const canSubmit = (() => {
+    const hasIncome = !!getNumericValue(income);
+    if (!hasIncome || bracketLoading) return false;
+    return isDev ? true : !!bracket;
+  })();
+
+  const submitLabel = (() => {
+    const hasIncome = !!getNumericValue(income);
+    if (!hasIncome) return '월 소득을 입력해주세요';
+    if (bracketLoading) return '소득분위를 불러오는 중…';
+    if (isDev) return (bracket?.label ?? mockBracketFromIncome(getNumericValue(income))?.label) + '과 비교 분석하기';
+    if (bracket) return `${bracket.label}과 비교 분석하기`;
+    return '소득분위를 불러오지 못했습니다';
+  })();
 
   return (
     <div className="app-container">
@@ -103,7 +258,7 @@ const MyCost = () => {
         <header className="app-header">
           <div className="logo-circle">3</div>
           <h1 className="logo-text">쓸림</h1>
-          <p className="subtitle">나의 월 생활비를 입력해보세요</p>
+          <p className="subtitle">나의 월 소득과 생활비를 입력해보세요</p>
         </header>
 
         <main className="content-area">
@@ -112,159 +267,54 @@ const MyCost = () => {
             <div className="instruction">
               <div className="instruction-icon">💡</div>
               <p>슬라이더로 빠르게 조정하거나, 직접 입력하세요</p>
-              <p className="unit-info">식비·교통비·기타는 천원 단위, 주거비는 만원 단위</p>
+              <p className="unit-info">모든 항목은 <b>만원</b> 단위로 입력/표시됩니다</p>
             </div>
           </div>
 
-          <div className="region-selection">
-            <h3>지역 선택</h3>
-            <div className="region-buttons">
-              {regions.map((region) => (
-                <button
-                  key={region}
-                  className={`region-btn ${selectedRegion === region ? 'active' : ''}`}
-                  onClick={() => setSelectedRegion(region)}
-                >
-                  {region}
-                </button>
-              ))}
-            </div>
-          </div>
-
+          {/* 월 소득 */}
           <div className="cost-input-section">
-            {/* 주거비 */}
-            <div className="cost-item">
-              <div className="cost-header">
-                <label>주거비</label>
-                <span className="cost-display">{myCosts.housing || '0만원'}</span>
-              </div>
-              <div className="slider-container">
-                <input
-                  type="range"
-                  min={getSliderRange('housing').min}
-                  max={getSliderRange('housing').max}
-                  step={getSliderRange('housing').step}
-                  value={getNumericValue(myCosts.housing) || getSliderRange('housing').min}
-                  onChange={(e) => handleSliderChange('housing', e.target.value)}
-                  className="cost-slider"
-                  style={{ '--slider-progress': `${getSliderProgress('housing')}%` }}
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="직접 입력하세요."
-                value={getNumericValue(myCosts.housing) || ''}
-                onChange={(e) => handleInputChange('housing', e.target.value)}
-                className="cost-input"
-              />
-            </div>
-
-            {/* 식비 */}
-            <div className="cost-item">
-              <div className="cost-header">
-                <label>식비</label>
-                <span className="cost-display">{myCosts.food || '0만원'}</span>
-              </div>
-              <div className="slider-container">
-                <input
-                  type="range"
-                  min={getSliderRange('food').min}
-                  max={getSliderRange('food').max}
-                  step={getSliderRange('food').step}
-                  value={getNumericValue(myCosts.food) || getSliderRange('food').min}
-                  onChange={(e) => handleSliderChange('food', e.target.value)}
-                  className="cost-slider"
-                  style={{ '--slider-progress': `${getSliderProgress('food')}%` }}
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="직접 입력하세요."
-                value={getNumericValue(myCosts.food) || ''}
-                onChange={(e) => handleInputChange('food', e.target.value)}
-                className="cost-input"
-              />
-            </div>
-
-            {/* 교통비 */}
-            <div className="cost-item">
-              <div className="cost-header">
-                <label>교통비</label>
-                <span className="cost-display">{myCosts.transport || '0만원'}</span>
-              </div>
-              <div className="slider-container">
-                <input
-                  type="range"
-                  min={getSliderRange('transport').min}
-                  max={getSliderRange('transport').max}
-                  step={getSliderRange('transport').step}
-                  value={getNumericValue(myCosts.transport) || getSliderRange('transport').min}
-                  onChange={(e) => handleSliderChange('transport', e.target.value)}
-                  className="cost-slider"
-                  style={{ '--slider-progress': `${getSliderProgress('transport')}%` }}
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="직접 입력하세요."
-                value={getNumericValue(myCosts.transport) || ''}
-                onChange={(e) => handleInputChange('transport', e.target.value)}
-                className="cost-input"
-              />
-            </div>
-
-            {/* 기타 */}
-            <div className="cost-item">
-              <div className="cost-header">
-                <label>기타</label>
-                <span className="cost-display">{myCosts.other || '0만원'}</span>
-              </div>
-              <div className="slider-container">
-                <input
-                  type="range"
-                  min={getSliderRange('other').min}
-                  max={getSliderRange('other').max}
-                  step={getSliderRange('other').step}
-                  value={getNumericValue(myCosts.other) || getSliderRange('other').min}
-                  onChange={(e) => handleSliderChange('other', e.target.value)}
-                  className="cost-slider"
-                  style={{ '--slider-progress': `${getSliderProgress('other')}%` }}
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="직접 입력하세요."
-                value={getNumericValue(myCosts.other) || ''}
-                onChange={(e) => handleInputChange('other', e.target.value)}
-                className="cost-input"
-              />
-            </div>
+            <IncomeItem />
           </div>
 
-          {/* 총 월 생활비 */}
+          {/* 지출 6개 항목 */}
+          <div className="cost-input-section">
+            <CostItem label="식비" keyName="food" />
+            <CostItem label="주거비" keyName="housing" />
+            <CostItem label="교육비" keyName="education" />
+            <CostItem label="교통비" keyName="transport" />
+            <CostItem label="통신비" keyName="communication" />
+            <CostItem label="오락·문화비" keyName="entertainment" />
+          </div>
+
+          {/* 총 지출 & 소득 대비 지출 비율 */}
           <div className="total-cost-section">
             <div className="total-cost-display">
               <span className="total-label">총 월 생활비</span>
-              <span className="total-amount">{formatTotalCost(getTotalCost())}원</span>
+              <span className="total-amount">{formatCurrency(getTotalExpenseWon())}원</span>
+            </div>
+
+            <div className="ratio-row">
+              <span className="ratio-label">소득 대비 지출 비율</span>
+              <div className="ratio-right">
+                <span className="ratio-number">{getNumericValue(income) ? `${expenseRatio}%` : '—'}</span>
+                <span className={`level-badge ${ratioLevel.className}`}>{ratioLevel.text}</span>
+              </div>
             </div>
           </div>
 
+          {/* 비교 버튼 */}
           <div className="button-group">
-            <button className="back-button" onClick={goBack}>
-              뒤로가기
-            </button>
-            <button 
-              className={`submit-button ${selectedRegion ? 'active' : 'disabled'}`}
+            <button className="back-button" onClick={goBack}>뒤로가기</button>
+            <button
+              className={`submit-button ${canSubmit ? 'active' : 'disabled'}`}
               onClick={handleSubmit}
-              disabled={!selectedRegion}
+              disabled={!canSubmit}
             >
-              {selectedRegion ? `${selectedRegion}과 비교 분석하기` : '지역을 선택해주세요'}
+              {submitLabel}
             </button>
           </div>
         </main>
       </div>
     </div>
   );
-};
-
-export default MyCost;
+}

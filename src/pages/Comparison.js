@@ -1,3 +1,4 @@
+// src/pages/Comparison.js
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Comparison.css';
@@ -5,49 +6,56 @@ import './Comparison.css';
 const Comparison = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // MyCost 페이지에서 전달받은 데이터 (실제로는 props나 state로 받아야 함)
-  const userData = location.state || {
-    selectedRegion: '광주',
-    myCosts: {
-      housing: '45만원',
-      food: '280만원',
-      transport: '90만원',
-      other: '120만원'
-    }
+
+  // 안전 숫자 변환
+  const safeNum = (v) => {
+    const s = (v ?? '').toString();
+    const only = s.replace(/[^0-9]/g, '');
+    return only ? parseInt(only, 10) : 0;
   };
 
-  // 지역별 평균 생활비 데이터 (실제로는 API에서 받아와야 함)
+  // 전달받은 데이터
+  const state = location.state || {};
+  const my = state.myCosts || {};
+
+  // 사용자 값(만원)
+  const userFood          = safeNum(my.food);
+  const userHousing       = safeNum(my.housing);
+  const userEducation     = safeNum(my.education);
+  const userTransport     = safeNum(my.transport);
+  const userCommunication = safeNum(my.communication);
+  const userEntertainment = safeNum(my.entertainment);
+
+  // 지역/소득분위
+  const currentRegion = state.selectedRegion || state.selectedBracket || '서울';
+
+  // 평균 데이터 (예시)
   const regionAverages = {
-    '서울': { housing: 65, food: 35, transport: 12, other: 20 },
-    '경기': { housing: 55, food: 32, transport: 11, other: 18 },
-    '부산': { housing: 40, food: 28, transport: 8, other: 15 },
-    '대구': { housing: 38, food: 26, transport: 7, other: 14 },
-    '광주': { housing: 35, food: 25, transport: 6, other: 13 },
-    '대전': { housing: 42, food: 27, transport: 8, other: 16 }
+    '서울': { food: 35, housing: 65, education: 18, transport: 12, communication: 10, entertainment: 14 },
+    '경기': { food: 32, housing: 55, education: 16, transport: 11, communication: 9,  entertainment: 13 },
+    '부산': { food: 28, housing: 40, education: 14, transport: 8,  communication: 8,  entertainment: 12 },
+    '대구': { food: 26, housing: 38, education: 13, transport: 7,  communication: 7,  entertainment: 11 },
+    '광주': { food: 25, housing: 35, education: 12, transport: 6,  communication: 7,  entertainment: 11 },
+    '대전': { food: 27, housing: 42, education: 13, transport: 8,  communication: 8,  entertainment: 12 }
+  };
+  const avg = regionAverages[currentRegion] || { food: 0, housing: 0, education: 0, transport: 0, communication: 0, entertainment: 0 };
+
+  const goBack = () => navigate('/mycost');
+  const goHome = () => navigate('/');
+
+  // 가로바 너비 계산
+  const widthPct = (me, avgV) => {
+    const maxV = Math.max(me, avgV, 1);
+    return Math.min((me / maxV) * 100, 100);
   };
 
-  const currentRegion = userData.selectedRegion;
-  const averageData = regionAverages[currentRegion] || { housing: 0, food: 0, transport: 0, other: 0 };
+  // 합계
+  const totalUserWon =
+    (userFood + userHousing + userEducation + userTransport + userCommunication + userEntertainment) * 10000;
+  const totalAvgWon =
+    (avg.food + avg.housing + avg.education + avg.transport + avg.communication + avg.entertainment) * 10000;
 
-  // 사용자 입력값에서 숫자만 추출
-  const getUserCost = (costString) => {
-    return parseInt(costString.replace(/[^0-9]/g, '')) || 0;
-  };
-
-  const userHousing = getUserCost(userData.myCosts.housing);
-  const userFood = getUserCost(userData.myCosts.food);
-  const userTransport = getUserCost(userData.myCosts.transport);
-  const userOther = getUserCost(userData.myCosts.other);
-
-  const goBack = () => {
-    navigate('/mycost');
-  };
-
-  const goHome = () => {
-    navigate('/');
-  };
-
+  // ===== 렌더 =====
   return (
     <div className="app-container">
       <div className="phone-frame">
@@ -59,132 +67,37 @@ const Comparison = () => {
 
         <main className="content-area">
           <div className="title-section">
-            <h2>{currentRegion} 지역 생활비 비교</h2>
-            <p className="description">나의 생활비와 지역 평균을 비교해보세요</p>
+            <h2>{currentRegion} 생활비 비교</h2>
+            <p className="description">나의 생활비와 소득분위 평균을 항목별로 비교해보세요</p>
           </div>
 
           <div className="comparison-section">
-            <div className="comparison-item">
-              <div className="category-header">
-                <h3>주거비</h3>
-                <div className="cost-display">
-                  <span className={`my-cost ${userHousing > averageData.housing ? 'higher' : 'lower'}`}>{userHousing}만원</span>
-                  <span className="vs">vs</span>
-                  <span className={`avg-cost ${averageData.housing > userHousing ? 'higher' : 'lower'}`}>{averageData.housing}만원</span>
-                </div>
-              </div>
-              <div className="comparison-bar">
-                <div className="bar-container">
-                  <div 
-                    className={`my-bar ${userHousing > averageData.housing ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((userHousing / Math.max(userHousing, averageData.housing)) * 100, 100)}%` }}
-                  ></div>
-                  <div 
-                    className={`avg-bar ${averageData.housing > userHousing ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((averageData.housing / Math.max(userHousing, averageData.housing)) * 100, 100)}%` }}
-                  ></div>
-                </div>
-                <div className="bar-labels">
-                  <span>나의 비용</span>
-                  <span>지역 평균</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="comparison-item">
-              <div className="category-header">
-                <h3>식비</h3>
-                <div className="cost-display">
-                  <span className={`my-cost ${userFood > averageData.food ? 'higher' : 'lower'}`}>{userFood}만원</span>
-                  <span className="vs">vs</span>
-                  <span className={`avg-cost ${averageData.food > userFood ? 'higher' : 'lower'}`}>{averageData.food}만원</span>
-                </div>
-              </div>
-              <div className="comparison-bar">
-                <div className="bar-container">
-                  <div 
-                    className={`my-bar ${userFood > averageData.food ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((userFood / Math.max(userFood, averageData.food)) * 100, 100)}%` }}
-                  ></div>
-                  <div 
-                    className={`avg-bar ${averageData.food > userFood ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((averageData.food / Math.max(userFood, averageData.food)) * 100, 100)}%` }}
-                  ></div>
-                </div>
-                <div className="bar-labels">
-                  <span>나의 비용</span>
-                  <span>지역 평균</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="comparison-item">
-              <div className="category-header">
-                <h3>교통비</h3>
-                <div className="cost-display">
-                  <span className={`my-cost ${userTransport > averageData.transport ? 'higher' : 'lower'}`}>{userTransport}만원</span>
-                  <span className="vs">vs</span>
-                  <span className={`avg-cost ${averageData.transport > userTransport ? 'higher' : 'lower'}`}>{averageData.transport}만원</span>
-                </div>
-              </div>
-              <div className="comparison-bar">
-                <div className="bar-container">
-                  <div 
-                    className={`my-bar ${userTransport > averageData.transport ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((userTransport / Math.max(userTransport, averageData.transport)) * 100, 100)}%` }}
-                  ></div>
-                  <div 
-                    className={`avg-bar ${averageData.transport > userTransport ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((averageData.transport / Math.max(userTransport, averageData.transport)) * 100, 100)}%` }}
-                  ></div>
-                </div>
-                <div className="bar-labels">
-                  <span>나의 비용</span>
-                  <span>지역 평균</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="comparison-item">
-              <div className="category-header">
-                <h3>기타</h3>
-                <div className="cost-display">
-                  <span className={`my-cost ${userOther > averageData.other ? 'higher' : 'lower'}`}>{userOther}만원</span>
-                  <span className="vs">vs</span>
-                  <span className={`avg-cost ${averageData.other > userOther ? 'higher' : 'lower'}`}>{averageData.other}만원</span>
-                </div>
-              </div>
-              <div className="comparison-bar">
-                <div className="bar-container">
-                  <div 
-                    className={`my-bar ${userOther > averageData.other ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((userOther / Math.max(userOther, averageData.other)) * 100, 100)}%` }}
-                  ></div>
-                  <div 
-                    className={`avg-bar ${averageData.other > userOther ? 'higher' : 'lower'}`} 
-                    style={{ width: `${Math.min((averageData.other / Math.max(userOther, averageData.other)) * 100, 100)}%` }}
-                  ></div>
-                </div>
-                <div className="bar-labels">
-                  <span>나의 비용</span>
-                  <span>지역 평균</span>
-                </div>
-              </div>
-            </div>
+            {/* 식비 */}
+            <ComparisonItem label="식비" myValue={userFood} avgValue={avg.food} widthPct={widthPct} />
+            {/* 주거비 */}
+            <ComparisonItem label="주거비" myValue={userHousing} avgValue={avg.housing} widthPct={widthPct} />
+            {/* 교육비 */}
+            <ComparisonItem label="교육비" myValue={userEducation} avgValue={avg.education} widthPct={widthPct} />
+            {/* 교통비 */}
+            <ComparisonItem label="교통비" myValue={userTransport} avgValue={avg.transport} widthPct={widthPct} />
+            {/* 통신비 */}
+            <ComparisonItem label="통신비" myValue={userCommunication} avgValue={avg.communication} widthPct={widthPct} />
+            {/* 오락·문화비 */}
+            <ComparisonItem label="오락·문화비" myValue={userEntertainment} avgValue={avg.entertainment} widthPct={widthPct} />
           </div>
 
           <div className="summary-section">
             <h3>분석 요약</h3>
             <div className="summary-content">
               <p>
-                {currentRegion} 지역에서 나의 총 생활비는 <strong>{((userHousing * 10000) + (userFood * 10000) + (userTransport * 10000) + (userOther * 10000)).toLocaleString('ko-KR')}원</strong>이고,
-                지역 평균은 <strong>{((averageData.housing * 10000) + (averageData.food * 10000) + (averageData.transport * 10000) + (averageData.other * 10000)).toLocaleString('ko-KR')}원</strong>입니다.
+                {currentRegion}에서 나의 총 생활비는 <strong>{totalUserWon.toLocaleString('ko-KR')}원</strong>, 소득분위 평균은{' '}
+                <strong>{totalAvgWon.toLocaleString('ko-KR')}원</strong>입니다.
               </p>
-              <p>
-                {(userHousing * 10000) + (userFood * 10000) + (userTransport * 10000) + (userOther * 10000) > (averageData.housing * 10000) + (averageData.food * 10000) + (averageData.transport * 10000) + (averageData.other * 10000)
-                  ? '지역 평균보다 높은 생활비를 사용하고 있습니다.' 
-                  : '지역 평균보다 낮은 생활비를 사용하고 있습니다.'}
-              </p>
+              <b>
+                {totalUserWon > totalAvgWon
+                  ? '소득분위 평균보다 높은 생활비를 사용하고 있습니다.'
+                  : '소득분위 평균보다 낮은 생활비를 사용하고 있습니다.'}
+              </b>
             </div>
           </div>
 
@@ -201,5 +114,29 @@ const Comparison = () => {
     </div>
   );
 };
+
+// 재사용 가능한 비교 아이템 컴포넌트
+const ComparisonItem = ({ label, myValue, avgValue, widthPct }) => (
+  <div className="comparison-item">
+    <div className="category-header">
+      <h3>{label}</h3>
+      <div className="cost-display">
+        <span className={`my-cost ${myValue > avgValue ? 'higher' : 'lower'}`}>{myValue}만원</span>
+        <span className="vs">vs</span>
+        <span className={`avg-cost ${avgValue > myValue ? 'higher' : 'lower'}`}>{avgValue}만원</span>
+      </div>
+    </div>
+    <div className="comparison-bar">
+      <div className="bar-container">
+        <div className={`my-bar ${myValue > avgValue ? 'higher' : 'lower'}`} style={{ width: `${widthPct(myValue, avgValue)}%` }}></div>
+        <div className={`avg-bar ${avgValue > myValue ? 'higher' : 'lower'}`} style={{ width: `${widthPct(avgValue, myValue)}%` }}></div>
+      </div>
+      <div className="bar-labels">
+        <span>나의 비용</span>
+        <span>소득분위 평균</span>
+      </div>
+    </div>
+  </div>
+);
 
 export default Comparison;
