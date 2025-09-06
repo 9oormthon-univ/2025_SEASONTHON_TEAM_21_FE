@@ -60,9 +60,9 @@ const MyCost = () => {
   // 총 생활비 계산 (모든 값을 원 단위로 변환)
   const getTotalCost = () => {
     const housing = getNumericValue(myCosts.housing) * 10000; // 만원 -> 원
-    const food = getNumericValue(myCosts.food) * 1000; // 천원 -> 원
-    const transport = getNumericValue(myCosts.transport) * 1000; // 천원 -> 원
-    const other = getNumericValue(myCosts.other) * 1000; // 천원 -> 원
+    const food = getNumericValue(myCosts.food) * 10000; // 만원 -> 원
+    const transport = getNumericValue(myCosts.transport) * 10000; // 만원 -> 원
+    const other = getNumericValue(myCosts.other) * 10000; // 만원 -> 원
     
     return housing + food + transport + other;
   };
@@ -70,6 +70,14 @@ const MyCost = () => {
   // 총 생활비를 천원 단위로 포맷팅
   const formatTotalCost = (total) => {
     return total.toLocaleString('ko-KR');
+  };
+
+  // 슬라이더 진행률 계산 (0-100%)
+  const getSliderProgress = (category) => {
+    const range = getSliderRange(category);
+    const currentValue = getNumericValue(myCosts[category]) || range.min;
+    const progress = ((currentValue - range.min) / (range.max - range.min)) * 100;
+    return Math.max(0, Math.min(100, progress));
   };
 
   const handleSubmit = () => {
@@ -139,6 +147,7 @@ const MyCost = () => {
                   value={getNumericValue(myCosts.housing) || getSliderRange('housing').min}
                   onChange={(e) => handleSliderChange('housing', e.target.value)}
                   className="cost-slider"
+                  style={{ '--slider-progress': `${getSliderProgress('housing')}%` }}
                 />
               </div>
               <input
@@ -165,6 +174,7 @@ const MyCost = () => {
                   value={getNumericValue(myCosts.food) || getSliderRange('food').min}
                   onChange={(e) => handleSliderChange('food', e.target.value)}
                   className="cost-slider"
+                  style={{ '--slider-progress': `${getSliderProgress('food')}%` }}
                 />
               </div>
               <input
@@ -191,6 +201,7 @@ const MyCost = () => {
                   value={getNumericValue(myCosts.transport) || getSliderRange('transport').min}
                   onChange={(e) => handleSliderChange('transport', e.target.value)}
                   className="cost-slider"
+                  style={{ '--slider-progress': `${getSliderProgress('transport')}%` }}
                 />
               </div>
               <input
@@ -217,6 +228,7 @@ const MyCost = () => {
                   value={getNumericValue(myCosts.other) || getSliderRange('other').min}
                   onChange={(e) => handleSliderChange('other', e.target.value)}
                   className="cost-slider"
+                  style={{ '--slider-progress': `${getSliderProgress('other')}%` }}
                 />
               </div>
               <input

@@ -178,7 +178,7 @@
   width: 100%;
   height: 8px;
   border-radius: 4px;
-  background: #E5E7EB; /* gray-200 */
+  background: linear-gradient(to right, #3B82F6 0%, #3B82F6 var(--slider-progress, 0%), #E5E7EB var(--slider-progress, 0%), #E5E7EB 100%);
   outline: none;
   -webkit-appearance: none;
   appearance: none;

@@ -19,12 +19,12 @@ const Comparison = () => {
 
   // 지역별 평균 생활비 데이터 (실제로는 API에서 받아와야 함)
   const regionAverages = {
-    '서울': { housing: 65, food: 350, transport: 120, other: 200 },
-    '경기': { housing: 55, food: 320, transport: 110, other: 180 },
-    '부산': { housing: 40, food: 280, transport: 80, other: 150 },
-    '대구': { housing: 38, food: 260, transport: 70, other: 140 },
-    '광주': { housing: 35, food: 250, transport: 60, other: 130 },
-    '대전': { housing: 42, food: 270, transport: 80, other: 160 }
+    '서울': { housing: 65, food: 35, transport: 12, other: 20 },
+    '경기': { housing: 55, food: 32, transport: 11, other: 18 },
+    '부산': { housing: 40, food: 28, transport: 8, other: 15 },
+    '대구': { housing: 38, food: 26, transport: 7, other: 14 },
+    '광주': { housing: 35, food: 25, transport: 6, other: 13 },
+    '대전': { housing: 42, food: 27, transport: 8, other: 16 }
   };
 
   const currentRegion = userData.selectedRegion;
@@ -153,11 +153,11 @@ const Comparison = () => {
             <h3>분석 요약</h3>
             <div className="summary-content">
               <p>
-                {currentRegion} 지역에서 나의 총 생활비는 <strong>{((userHousing * 10000) + (userFood * 1000) + (userTransport * 1000) + (userOther * 1000)).toLocaleString('ko-KR')}원</strong>이고,
-                지역 평균은 <strong>{((averageData.housing * 10000) + (averageData.food * 1000) + (averageData.transport * 1000) + (averageData.other * 1000)).toLocaleString('ko-KR')}원</strong>입니다.
+                {currentRegion} 지역에서 나의 총 생활비는 <strong>{((userHousing * 10000) + (userFood * 10000) + (userTransport * 10000) + (userOther * 10000)).toLocaleString('ko-KR')}원</strong>이고,
+                지역 평균은 <strong>{((averageData.housing * 10000) + (averageData.food * 10000) + (averageData.transport * 10000) + (averageData.other * 10000)).toLocaleString('ko-KR')}원</strong>입니다.
               </p>
               <p>
-                {(userHousing * 10000) + (userFood * 1000) + (userTransport * 1000) + (userOther * 1000) > (averageData.housing * 10000) + (averageData.food * 1000) + (averageData.transport * 1000) + (averageData.other * 1000)
+                {(userHousing * 10000) + (userFood * 10000) + (userTransport * 10000) + (userOther * 10000) > (averageData.housing * 10000) + (averageData.food * 10000) + (averageData.transport * 10000) + (averageData.other * 10000)
                   ? '지역 평균보다 높은 생활비를 사용하고 있습니다.' 
                   : '지역 평균보다 낮은 생활비를 사용하고 있습니다.'}
               </p>
