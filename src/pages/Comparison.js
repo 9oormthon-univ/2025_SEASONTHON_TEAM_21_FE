@@ -11,9 +11,9 @@ const Comparison = () => {
     selectedRegion: '광주',
     myCosts: {
       housing: '45만원',
-      food: '280천원',
-      transport: '90천원',
-      other: '120천원'
+      food: '280만원',
+      transport: '90만원',
+      other: '120만원'
     }
   };
 
@@ -110,9 +110,9 @@ const Comparison = () => {
               <div className="category-header">
                 <h3>교통비</h3>
                 <div className="cost-display">
-                  <span className="my-cost">{userTransport}천원</span>
+                  <span className="my-cost">{userTransport}만원</span>
                   <span className="vs">vs</span>
-                  <span className="avg-cost">{averageData.transport}천원</span>
+                  <span className="avg-cost">{averageData.transport}만원</span>
                 </div>
               </div>
               <div className="comparison-bar">
@@ -131,9 +131,9 @@ const Comparison = () => {
               <div className="category-header">
                 <h3>기타</h3>
                 <div className="cost-display">
-                  <span className="my-cost">{userOther}천원</span>
+                  <span className="my-cost">{userOther}만원</span>
                   <span className="vs">vs</span>
-                  <span className="avg-cost">{averageData.other}천원</span>
+                  <span className="avg-cost">{averageData.other}만원</span>
                 </div>
               </div>
               <div className="comparison-bar">

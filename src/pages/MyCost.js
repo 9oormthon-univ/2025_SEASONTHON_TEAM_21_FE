@@ -14,19 +14,19 @@ const MyCost = () => {
 
   const regions = ['서울', '경기', '부산', '대구', '광주', '대전'];
 
-  // 슬라이더 범위 설정 (주거비는 만원 단위, 나머지는 천원 단위)
+  // 슬라이더 범위 설정 (만원 단위)
   const getSliderRange = (category) => {
     switch (category) {
       case 'housing':
         return { min: 10, max: 200, step: 1, unit: '만원' }; // 10만원 ~ 200만원
       case 'food':
-        return { min: 100, max: 1000, step: 10, unit: '천원' }; // 10만원 ~ 100만원
+        return { min: 100, max: 1000, step: 10, unit: '만원' }; // 10만원 ~ 100만원
       case 'transport':
-        return { min: 20, max: 200, step: 5, unit: '천원' }; // 2만원 ~ 20만원
+        return { min: 20, max: 200, step: 5, unit: '만원' }; // 2만원 ~ 20만원
       case 'other':
-        return { min: 50, max: 500, step: 10, unit: '천원' }; // 5만원 ~ 50만원
+        return { min: 50, max: 500, step: 10, unit: '만원' }; // 5만원 ~ 50만원
       default:
-        return { min: 0, max: 100, step: 1, unit: '원' };
+        return { min: 0, max: 100, step: 1, unit: '만원' };
     }
   };
 
@@ -154,7 +154,7 @@ const MyCost = () => {
             <div className="cost-item">
               <div className="cost-header">
                 <label>식비</label>
-                <span className="cost-display">{myCosts.food || '0천원'}</span>
+                <span className="cost-display">{myCosts.food || '0만원'}</span>
               </div>
               <div className="slider-container">
                 <input
@@ -180,7 +180,7 @@ const MyCost = () => {
             <div className="cost-item">
               <div className="cost-header">
                 <label>교통비</label>
-                <span className="cost-display">{myCosts.transport || '0천원'}</span>
+                <span className="cost-display">{myCosts.transport || '0만원'}</span>
               </div>
               <div className="slider-container">
                 <input
@@ -206,7 +206,7 @@ const MyCost = () => {
             <div className="cost-item">
               <div className="cost-header">
                 <label>기타</label>
-                <span className="cost-display">{myCosts.other || '0천원'}</span>
+                <span className="cost-display">{myCosts.other || '0만원'}</span>
               </div>
               <div className="slider-container">
                 <input
