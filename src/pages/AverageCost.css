@@ -1,0 +1,188 @@
+/* 구글 폰트(Noto Sans KR) 불러오기 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+/* 전체 앱 배경 및 폰트 설정 */
+.app-container {
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 스마트폰 모양 프레임 */
+.phone-frame {
+  width: 100%;
+  max-width: 420px;
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 24px 0;
+}
+
+/* 헤더 */
+.app-header {
+  text-align: center;
+  padding: 0 24px 20px;
+}
+
+.logo-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3B82F6; /* blue-500 */
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitle {
+  color: #6B7280; /* gray-500 */
+  margin: 4px 0 0;
+}
+
+/* 메인 컨텐츠 영역 */
+.content-area {
+  padding: 0 24px;
+}
+
+.title-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.description {
+  font-size: 14px;
+  color: #6B7280; /* gray-500 */
+  margin: 0;
+}
+
+/* 슬라이더 영역 */
+.slider-wrapper {
+  margin: 32px 0;
+}
+
+.slide-card-wrapper {
+  padding: 0 8px;
+}
+
+.slide-card {
+  background-color: #ffffff;
+  border: 1px solid #E5E7EB; /* gray-200 */
+  border-radius: 16px;
+  padding: 24px;
+  outline: none; /* 클릭 시 테두리 제거 */
+}
+
+.slide-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.cost-total span {
+  font-size: 14px;
+  color: #4B5563; /* gray-600 */
+}
+
+.cost-total p {
+  font-size: 28px;
+  font-weight: bold;
+  color: #3B82F6; /* blue-500 */
+  margin: 4px 0 16px;
+}
+
+.cost-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  color: #374151; /* gray-700 */
+  padding: 12px 0;
+  border-top: 1px solid #F3F4F6; /* gray-100 */
+}
+
+/* react-slick 커스텀 스타일 */
+.slick-list {
+  margin: 0 -8px; /* 슬라이드 간 간격 보정 */
+}
+
+.slick-dots {
+  bottom: -25px;
+}
+
+.slick-dots li button:before {
+  color: #D1D5DB; /* gray-300 */
+  opacity: 1;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #3B82F6; /* blue-500 */
+}
+
+/* 지역 선택 탭 */
+.region-nav {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0 24px;
+}
+
+.region-tab {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #6B7280; /* gray-500 */
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.region-tab.active {
+  background-color: #EFF6FF; /* blue-50 */
+  color: #3B82F6; /* blue-500 */
+  font-weight: 700;
+}
+
+/* 메인 버튼 */
+.cta-button {
+  width: 100%;
+  background-color: #3B82F6; /* blue-500 */
+  color: white;
+  border: none;
+  padding: 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cta-button:hover {
+  background-color: #2563EB; /* blue-600 */
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 13px;
+  color: #9CA3AF; /* gray-400 */
+  margin-top: 20px;
+}
+
+.footer-text p {
+  margin: 4px 0;
+}
